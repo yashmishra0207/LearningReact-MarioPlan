@@ -1,14 +1,17 @@
-import React from 'react'
-import ProjectSummary from './ProjectSummary'
+import React from "react";
+import ProjectSummary from "./ProjectSummary";
 
-const ProjectList = () => {
-    return (
-        <div className="project-list section">
-            <ProjectSummary/>
-            <ProjectSummary/>
-            <ProjectSummary/>
-        </div>
-    )
-}
+const ProjectList = (props) => {
+  return (
+    <div className="project-list section">
+      {props.projects ? (
+        props.projects.map((project) => (
+          <ProjectSummary key={project.id} project={project} />
+        ))
+       ) : "Loading..."
+      }
+    </div>
+  );
+};
 
-export default ProjectList
+export default ProjectList;
