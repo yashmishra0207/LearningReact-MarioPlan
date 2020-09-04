@@ -18,6 +18,7 @@ class CreateProject extends Component {
         e.preventDefault();
         // console.log(this.state);
         this.props.create(this.state)
+        this.props.history.push('/')
     }
     render() {
         if (!this.props.auth.uid) return <Redirect to='/signin' />

@@ -11,12 +11,15 @@ export const createProject = (project) => {
   return (dispatch, getState, { getFirebase, getFirestore }) => {
     //make async call to DB
       //Getting reference of firestore database
-      const firestore = getFirestore();
+    const firestore = getFirestore();
+    const profile = getState().firebase.profile;
+    const authoreId = getState().firebase.auth.uid;
+
       firestore.collection('projects').add({
           ...project,
-          authorFirstName: 'Net',
-          authorLastName: 'Ninja',
-          authorId: 12345,
+          authorFirstName: profile.firstName,
+        authorLastName: profile.lastName,
+          authorId: authoreId,
           createdAt: new Date()
       }).then(() => {
         // resume dispatch and send the action to the projectReducer
