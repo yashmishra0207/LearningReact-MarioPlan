@@ -1,21 +1,60 @@
-import React from 'react'
+import React from "react";
+import Loader from "react-loader-spinner";
+import { connect } from "react-redux";
+import { firestoreConnect } from "react-redux-firebase";
+import { Redirect } from "react-router";
+import { compose } from "redux";
 
 const ProjectDetails = (props) => {
-    const id = props.match.params.id;
+  //   const id = props.match.params.id;
+    if(!props.auth.uid) return <Redirect to='/signin' />
+    
+  const { project } = props;
+  if (project) {
     return (
-        <div className="container section project-details">
-            <div className="card z-depth-0">
-                <div className="card-content">
-                    <span className="card-title">Project Title - {id}</span>
-                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsam nihil, aspernatur dolorem officiis mollitia qui quas voluptate deleniti corporis quibusdam voluptatem recusandae, delectus eius aliquid error laudantium! Optio, aut magni!</p>
-                </div>
-                <div className="card-action grey lighten-4 grey-text">
-                    <div>Posted by The Net Ninja</div>
-                    <div>2nd September, 2am</div>
-                </div>
-            </div>
+      <div className="container section project-details">
+        <div className="card z-depth-0">
+          <div className="card-content">
+            <span className="card-title">{project.title}</span>
+            <p>{project.content}</p>
+          </div>
+          <div className="card-action grey lighten-4 grey-text">
+                    <div>Posted by {project.authorFirstName} {project.authorLastName}</div>
+            <div>2nd September, 2am</div>
+          </div>
         </div>
-    )
-}
+      </div>
+    );
+  } else {
+    return (
+      //   <div className="container center">
+      //     <p>Loading Project...</p>
+      //   </div>
+      <div className=" container center ">
+        <Loader
+          type="ThreeDots"
+          color="#00BFFF"
+          height={100}
+          width={100}
+          timeout={3000} //3 secs
+        />
+      </div>
+    );
+  }
+};
 
-export default ProjectDetails
+const mapStateToProps = (state, ownProps) => {
+  const projects = state.firestore.data.projects;
+  const project = projects
+    ? state.firestore.data.projects[ownProps.match.params.id]
+    : null;
+  return {
+      project: project,
+      auth: state.firebase.auth
+  };
+};
+
+export default compose(
+  connect(mapStateToProps),
+  firestoreConnect([{ collection: "projects" }])
+)(ProjectDetails);
